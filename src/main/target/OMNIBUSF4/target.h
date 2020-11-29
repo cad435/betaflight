@@ -22,6 +22,9 @@
 
 #define USE_TARGET_CONFIG
 
+//#define OMNIBUSF4SD_MICRODRONE
+
+
 #if defined(OMNIBUSF4SD)
 #define TARGET_BOARD_IDENTIFIER "OBSD"
 #elif defined(LUXF4OSD)
@@ -61,7 +64,7 @@
 #define BEEPER_PIN              PB4
 #define BEEPER_INVERTED
 
-#if defined(OMNIBUSF4SD) || defined(DYSF4PRO)
+#if defined(OMNIBUSF4SD) || defined(DYSF4PRO) || defined(OMNIBUSF4SD_MICRODRONE)
 #define ENABLE_DSHOT_DMAR       DSHOT_DMAR_ON
 #endif
 
@@ -72,9 +75,12 @@
 #define INVERTER_PIN_UART3      PC9 // Omnibus F4 Pro Corners
 #elif defined(EXUAVF4PRO)
 #define INVERTER_PIN_UART6      PC8
+#elif defined(OMNIBUSF4SD_MICRODRONE)
+      //only fixed inverter on UART1
 #else
 #define INVERTER_PIN_UART1      PC0 // DYS F4 Pro; Omnibus F4 AIO (1st gen) have a FIXED inverter on UART1
 #endif
+
 
 #define USE_EXTI
 
@@ -96,6 +102,8 @@
 #define GYRO_1_ALIGN            CW270_DEG
 #elif defined(XRACERF4) || defined(EXUAVF4PRO)
 #define GYRO_1_ALIGN            CW90_DEG
+#elif defined(OMNIBUSF4SD_MICRODRONE)
+#define GYRO_1_ALIGN            CW90_DEG //TODO
 #elif defined(SYNERGYF4)
 #define GYRO_1_ALIGN            CW0_DEG_FLIP
 #else
@@ -125,7 +133,7 @@
 
 #if !defined(SYNERGYF4) //No baro sensor on SYNERGYF4
 #define USE_BARO
-#if defined(OMNIBUSF4SD)
+#if defined(OMNIBUSF4SD) || defined(OMNIBUSF4SD_MICRODRONE)
 #define USE_BARO_SPI_BMP280
 #define BARO_SPI_INSTANCE       SPI3
 #define BARO_CS_PIN             PB3 // v1
@@ -151,14 +159,14 @@
 #define USE_FLASH_M25P16
 #define USE_FLASH_W25M512
 
-#if defined(OMNIBUSF4SD)
+#if defined(OMNIBUSF4SD) || defined(OMNIBUSF4SD_MICRODRONE)
 #define ENABLE_BLACKBOX_LOGGING_ON_SDCARD_BY_DEFAULT
 #define USE_SDCARD
 #define USE_SDCARD_SPI
 #define SDCARD_DETECT_INVERTED
 #define SDCARD_DETECT_PIN               PB7
 #define SDCARD_SPI_INSTANCE             SPI2
-#define SDCARD_SPI_CS_PIN               SPI2_NSS_PIN
+#define SDCARD_SPI_CS_PIN               PB12//SPI2_NSS_PIN
 #define SPI2_TX_DMA_OPT                         0     // DMA 1 Stream 4 Channel 0
 
 // For variants with SDcard replaced with flash chip
@@ -188,6 +196,11 @@
 #define RX_SPI_EXTI_PIN         PA0 // instead of rssi input
 #endif
 
+#if defined(OMNIBUSF4SD_MICRODRONE)
+#undef RX_SPI_EXTI_PIN
+#define RX_SPI_EXTI_PIN NONE
+#endif
+
 #define USE_VCP
 #define USE_USB_DETECT
 #define USB_DETECT_PIN   PC5
@@ -206,6 +219,11 @@
 #define UART4_TX_PIN            PA0
 #endif
 
+#if defined(OMNIBUSF4SD_MICRODRONE)
+#define UART4_RX_PIN            NONE
+#define UART4_TX_PIN            PA0
+#endif
+
 #define USE_UART6
 #define UART6_RX_PIN            PC7
 #define UART6_TX_PIN            PC6
@@ -213,7 +231,7 @@
 #define USE_SOFTSERIAL1
 #define USE_SOFTSERIAL2
 
-#if defined(EXUAVF4PRO)
+#if defined(EXUAVF4PRO) || defined(OMNIBUSF4SD_MICRODRONE)
 #define SERIAL_PORT_COUNT       7 // VCP, USART1, USART3, USART4, USART6, SOFTSERIAL x 2
 #else
 #define SERIAL_PORT_COUNT       6 // VCP, USART1, USART3, USART6, SOFTSERIAL x 2
